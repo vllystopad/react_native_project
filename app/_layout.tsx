@@ -1,16 +1,18 @@
 import { Stack } from "expo-router";
-import { View } from "react-native";
+import { Providers } from "@/providers";
+import { Header } from "@/components/ui/header";
+import { Footer } from "@/components/ui/footer";
+
 
 export default function RootLayout() {
     return (
-        <View style={{ flex: 1 }}>
-            {/* <Header /> */}
-            <Stack>
-                <Stack.Screen name={"(main)"} options={{ headerShown: false }} />
-                <Stack.Screen name={"(auth)"} options={{ headerShown: false }} />
-            </Stack>
-
-            {/* <Footer /> */}
-        </View>
+            <Providers>
+                <Header />
+                <Stack>
+                    <Stack.Screen name={"(main)"} options={{ headerShown: false }} />
+                    <Stack.Screen name={"(auth)"} options={{ headerShown: false }} />
+                </Stack>
+                <Footer />
+            </Providers>
     )
 }

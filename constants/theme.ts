@@ -1,53 +1,51 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 
-import { Platform } from 'react-native';
+export type ThemeMode = 'light' | 'dark';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
-  light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-  },
-  dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
-  },
+export const colors = (mode: ThemeMode) => {
+  const isLight = mode === 'light';
+  return {
+    primary:         isLight ? '#5A6D57' : '#4D8FD6',
+    primaryLight:    isLight ? '#D1D9CF' : '#1A3A6E',
+    primaryDark:     isLight ? '#748C70' : '#2A6BB5',
+    secondary:       isLight ? '#404040' : '#8EB8E8',
+    secondaryLight:  isLight ? '#606060' : '#A0B8D0',
+    background:      isLight ? '#FFFFFF' : '#0A1628',
+    surface:         isLight ? '#F0F0F0' : '#0F2240',
+    surfaceVariant:  isLight ? '#D1D9CF' : '#1A3A6E',
+    textPrimary:     isLight ? '#0C0C0C' : '#E0ECFA',
+    textSecondary:   isLight ? '#606060' : '#A0B8D0',
+    outline:         isLight ? '#ADADAD' : '#4A6B8A',
+    error:           '#FF4858',
+    success:         '#00966D',
+    white:           '#FFFFFF',
+  };
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export const getTheme = (mode: ThemeMode) => {
+  const c = colors(mode);
+  const base = mode === 'light' ? MD3LightTheme : MD3DarkTheme;
+
+  return {
+    ...base,
+    colors: {
+      ...base.colors,
+      primary:             c.primary,
+      onPrimary:           mode === 'light' ? '#FFFFFF' : '#0A1628',
+      primaryContainer:    c.primaryLight,
+      onPrimaryContainer:  mode === 'light' ? '#1A2E18' : '#B8D4F5',
+      secondary:           c.secondary,
+      onSecondary:         mode === 'light' ? '#FFFFFF' : '#0A1628',
+      secondaryContainer:  c.surfaceVariant,
+      background:          c.background,
+      onBackground:        c.textPrimary,
+      surface:             c.surface,
+      onSurface:           c.textPrimary,
+      surfaceVariant:      c.surfaceVariant,
+      onSurfaceVariant:    c.textSecondary,
+      outline:             c.outline,
+      error:               c.error,
+      onError:             '#FFFFFF',
+    },
+  };
+};
