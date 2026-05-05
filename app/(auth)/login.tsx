@@ -2,37 +2,20 @@ import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Text, useTheme } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import { z } from 'zod';
-
-const schema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-});
-
-type FormErrors = { email?: string; password?: string };
+import { useForm, Controller } from 'react-hook-form';
+import { useLogin } from '@/hooks/useAuth';
+import { loginSchema, zodResolver, type LoginFormData } from '@/common/validationSchemas';
 
 export default function LoginPage() {
   const theme = useTheme();
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<FormErrors>({});
+  const { login, isPending, error } = useLogin();
   const [secure, setSecure] = useState(true);
 
-  const handleSubmit = () => {
-    const result = schema.safeParse({ email, password });
-    if (!result.success) {
-      const fieldErrors: FormErrors = {};
-      result.error.issues.forEach((issue) => {
-        const key = issue.path[0] as keyof FormErrors;
-        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-      });
-      setErrors(fieldErrors);
-      return;
-    }
-    setErrors({});
-    // TODO: auth logic
-  };
+  const { control, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -40,40 +23,68 @@ export default function LoginPage() {
         Sign In
       </Text>
 
-      <TextInput
-        label="Email"
-        mode="outlined"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        error={!!errors.email}
-        style={styles.input}
+      <Controller
+        control={control}
+        name="email"
+        render={({ field: { onChange, value } }) => (
+          <>
+            <TextInput
+              label="Email"
+              mode="outlined"
+              value={value}
+              onChangeText={onChange}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              error={!!errors.email}
+              style={styles.input}
+            />
+            <HelperText type="error" visible={!!errors.email}>
+              {errors.email?.message}
+            </HelperText>
+          </>
+        )}
       />
-      <HelperText type="error" visible={!!errors.email}>
-        {errors.email}
-      </HelperText>
 
-      <TextInput
-        label="Password"
-        mode="outlined"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry={secure}
-        error={!!errors.password}
-        style={styles.input}
-        right={
-          <TextInput.Icon
-            icon={secure ? 'eye' : 'eye-off'}
-            onPress={() => setSecure(p => !p)}
-          />
-        }
+      <Controller
+        control={control}
+        name="password"
+        render={({ field: { onChange, value } }) => (
+          <>
+            <TextInput
+              label="Password"
+              mode="outlined"
+              value={value}
+              onChangeText={onChange}
+              secureTextEntry={secure}
+              error={!!errors.password}
+              style={styles.input}
+              right={
+                <TextInput.Icon
+                  icon={secure ? 'eye' : 'eye-off'}
+                  onPress={() => setSecure((p) => !p)}
+                />
+              }
+            />
+            <HelperText type="error" visible={!!errors.password}>
+              {errors.password?.message}
+            </HelperText>
+          </>
+        )}
       />
-      <HelperText type="error" visible={!!errors.password}>
-        {errors.password}
-      </HelperText>
 
-      <Button mode="contained" onPress={handleSubmit} style={styles.button}>
+      {error && (
+        <HelperText type="error" visible>
+          {(error as Error).message}
+        </HelperText>
+      )}
+
+      <Button
+        mode="contained"
+        onPress={handleSubmit((data) => login(data))}
+        loading={isPending}
+        disabled={isPending}
+        style={styles.button}
+      >
         Login
       </Button>
 
