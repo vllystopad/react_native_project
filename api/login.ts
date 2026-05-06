@@ -1,4 +1,5 @@
 import { baseAPI } from '.';
+import { type User } from '@/common/types';
 
 export interface LoginData {
   email: string;
@@ -6,12 +7,11 @@ export interface LoginData {
 }
 
 export interface LoginResponse {
-  success: boolean;
   token: string;
-  user: { _id: string; password: string };
+  user: User;
 }
 
 export const login = async (data: LoginData): Promise<LoginResponse> => {
-  const response = await baseAPI.post<LoginResponse>('/auth/login', data);
+  const response = await baseAPI.post<LoginResponse>('/customers/login', data);
   return response.data;
 };

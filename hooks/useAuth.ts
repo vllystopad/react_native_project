@@ -1,27 +1,22 @@
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
-import { login } from '@/api/login';
+import { login, LoginData } from '@/api/login';
 import { register, type RegisterData } from '@/api/register';
 import { logout } from '@/api/logout';
-import { currentUser } from '@/api/currentUser';
 import { useAuthStore } from '@/lib/stores/auth';
 import { ACCESS_TOKEN } from '@/common/store-keys';
-import { getAccessToken } from '@/common/utils';
 
 export const useLogin = () => {
   const { setUser } = useAuthStore();
   const router = useRouter();
 
   const { mutate, isPending, error } = useMutation({
-    mutationFn: login,
+    mutationFn: (data: LoginData) => login(data),
     onSuccess: async (data) => {
-      const token = getAccessToken(data.token);
-      await SecureStore.setItemAsync(ACCESS_TOKEN, token);
-      const userData = await currentUser();
-      setUser(userData.customer);
-
-      router.replace('/(main)');
+      await SecureStore.setItemAsync(ACCESS_TOKEN, data.token);
+      setUser(data.user);
+      router.replace('/private');
     },
   });
 
@@ -36,8 +31,8 @@ export const useRegister = () => {
     mutationFn: (data: RegisterData) => register(data),
     onSuccess: async (data) => {
       await SecureStore.setItemAsync(ACCESS_TOKEN, data.token);
-      setUser(data.customer);
-      router.replace('/(main)');
+      setUser(data.user);
+      router.replace('/private');
     },
   });
 

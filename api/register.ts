@@ -9,9 +9,8 @@ export interface RegisterData {
 }
 
 export interface RegisterResponse {
-  success: boolean;
-  customer: User;
   token: string;
+  user: User;
 }
 
 export const register = async (data: RegisterData): Promise<RegisterResponse> => {
