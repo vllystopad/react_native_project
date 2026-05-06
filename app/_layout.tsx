@@ -7,7 +7,6 @@ import { Footer } from '@/components/ui/footer';
 import { ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 
-// 1. auth вместе с гидрацией и прочим.  
 // 2. payment 
 // 3. если не доделаю то в конце добавить кастомный сплеш скрин
 // 4. splash screen - экран который появляется во время загрузки приложения 
