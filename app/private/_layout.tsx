@@ -8,7 +8,6 @@ export default function PrivateLayout() {
             <Tabs.Protected guard={isLoggedIn}>
                 <Tabs.Screen name="index" options={{ title: "Dashboard", headerShown: false }} />
                 <Tabs.Screen name="shop" options={{ title: "Shop", headerShown: false }} />
-                <Tabs.Screen name="payment" options={{ title: "Payment", headerShown: false }} />
             </Tabs.Protected>
         </Tabs>
     );

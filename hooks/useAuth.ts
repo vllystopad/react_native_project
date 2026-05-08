@@ -6,6 +6,7 @@ import { register, type RegisterData } from '@/api/register';
 import { logout } from '@/api/logout';
 import { useAuthStore } from '@/lib/stores/auth';
 import { ACCESS_TOKEN } from '@/common/store-keys';
+import { resetPaymentSheetCustomer } from '@stripe/stripe-react-native';
 
 export const useLogin = () => {
   const { setUser } = useAuthStore();
@@ -16,7 +17,7 @@ export const useLogin = () => {
     onSuccess: async (data) => {
       await SecureStore.setItemAsync(ACCESS_TOKEN, data.token);
       setUser(data.user);
-      router.replace('/private');
+      router.replace('/private/shop');
     },
   });
 
@@ -32,13 +33,20 @@ export const useRegister = () => {
     onSuccess: async (data) => {
       await SecureStore.setItemAsync(ACCESS_TOKEN, data.token);
       setUser(data.user);
-      router.replace('/private');
+      router.replace('/private/shop');
     },
   });
 
   return { register: mutate, isPending, error };
 };
 
+
+/**
+     * You must call this method when the user logs out from your app. This will ensure that
+     * any persisted authentication state in the PaymentSheet, such as authentication cookies,
+     * is also cleared during logout.
+ */
+// resetPaymentSheetCustomer: _resetPaymentSheetCustomer,
 export const useLogout = () => {
   const { removeUser } = useAuthStore();
   const router = useRouter();
@@ -46,6 +54,7 @@ export const useLogout = () => {
   const clear = async () => {
     await SecureStore.deleteItemAsync(ACCESS_TOKEN);
     removeUser();
+    resetPaymentSheetCustomer()
     router.replace('/login');
   };
 
