@@ -41,12 +41,6 @@ export const useRegister = () => {
 };
 
 
-/**
-     * You must call this method when the user logs out from your app. This will ensure that
-     * any persisted authentication state in the PaymentSheet, such as authentication cookies,
-     * is also cleared during logout.
- */
-// resetPaymentSheetCustomer: _resetPaymentSheetCustomer,
 export const useLogout = () => {
   const { removeUser } = useAuthStore();
   const router = useRouter();
@@ -54,7 +48,6 @@ export const useLogout = () => {
   const clear = async () => {
     await SecureStore.deleteItemAsync(ACCESS_TOKEN);
     removeUser();
-    resetPaymentSheetCustomer()
     router.replace('/login');
   };
 
