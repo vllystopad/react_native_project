@@ -7,6 +7,7 @@ export default function PaymentProvider({children}: {children: ReactNode}){
     return (
         <StripeProvider
             publishableKey={stripeKey}
+            urlScheme="myapp"
         >
             {children}
         </StripeProvider>

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TextInput, Button, HelperText, Text, useTheme } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { useLogin } from '@/hooks/useAuth';
+import { useAuthStore } from '@/lib/stores/auth';
 import { loginSchema, zodResolver, type LoginFormData } from '@/common/validationSchemas';
 
 export default function LoginPage() {

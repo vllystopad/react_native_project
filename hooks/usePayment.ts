@@ -1,13 +1,17 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { useStripe } from '@stripe/stripe-react-native';
+import { useStripe, PaymentSheet } from '@stripe/stripe-react-native';
 import { makePayment } from '@/api/payment';
 import { useRouter } from 'expo-router';
 import { PurchaseData } from '@/types/shop';
 import { queries } from '@/common/queries';
+import { useColorScheme } from '@/hooks/use-color-scheme.web';
+import { colors } from '@/constants/theme';
 
 export const usePaymentSheet = (purchaseData: PurchaseData) => {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const router = useRouter();
+    const colorScheme = useColorScheme();
+    const themeColors = colors(colorScheme ?? 'light');
 
     const initSheetQuery = useQuery({
         queryFn: async () => {
@@ -24,9 +28,43 @@ export const usePaymentSheet = (purchaseData: PurchaseData) => {
 
             console.log('Initializing payment sheet with clientSecret:', paymentResponse.clientSecret);
 
+            const customAppearance = {
+                colors: {
+                    primary: themeColors.primary,
+                    background: themeColors.background,
+                    componentBackground: themeColors.surface,
+                    componentBorder: themeColors.outline,
+                    componentDivider: themeColors.textSecondary,
+                    primaryText: themeColors.textPrimary,
+                    secondaryText: themeColors.textSecondary,
+                    componentText: themeColors.textPrimary,
+                    placeholderText: themeColors.textSecondary,
+                },
+                shapes: {
+                    borderRadius: 12,
+                    borderWidth: 1,
+                },
+                primaryButton: {
+                    shapes: {
+                        borderRadius: 20,
+                    },
+                    colors: {
+                        background: themeColors.primary,
+                    },
+                },
+            };
+
             const { error } = await initPaymentSheet({
                 merchantDisplayName: "Mobike Shop",
                 paymentIntentClientSecret: paymentResponse.clientSecret,
+                returnURL: "myapp://stripe-redirect",
+                appearance: customAppearance,
+                billingDetailsCollectionConfiguration: {
+                    name: PaymentSheet.CollectionMode.ALWAYS,
+                    email: PaymentSheet.CollectionMode.ALWAYS,
+                    phone: PaymentSheet.CollectionMode.ALWAYS,
+                    address: PaymentSheet.AddressCollectionMode.FULL,
+                },
                 defaultBillingDetails: {
                     name: purchaseData.name,
                     email: purchaseData.email,

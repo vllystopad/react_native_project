@@ -1,7 +1,6 @@
-import { SplashScreen } from 'expo-router';
+import { SplashScreen, Slot } from 'expo-router';
 import { Providers } from '@/providers';
 import { useAuthStore } from '@/lib/stores/auth';
-import {Stack} from 'expo-router';
 import { ActivityIndicator } from 'react-native';
 import { useEffect } from 'react';
 
@@ -14,16 +13,13 @@ export default function RootLayout() {
     SplashScreen.hideAsync();
   }, []);
 
-  if (!_hasHydrated){
-    return <ActivityIndicator style={{ flex: 1 }} />
+  if (!_hasHydrated) {
+    return <ActivityIndicator style={{ flex: 1 }} />;
   }
 
   return (
     <Providers>
-      <Stack>
-          <Stack.Screen name="private" options={{ headerShown: false }} />
-          <Stack.Screen name="register" options={{ headerShown: false }} />
-      </Stack>
+      <Slot />
     </Providers>
   );
 }

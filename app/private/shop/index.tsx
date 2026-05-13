@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { Button, View, Text } from "react-native";
 import PaymentProvider from "@/providers/StripeProvider";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import { PurchaseData } from "@/types/shop";
 import { usePaymentSheet } from "@/hooks/usePayment";
 import { useAuthStore } from "@/lib/stores/auth";
@@ -28,6 +28,26 @@ const mockProducts = [
     }
 ];
 
+
+// либо task manager (https://github.com/stripe/stripe-react-native/issues/1981#issuecomment-3189304985)
+// // if (Platform.OS === 'android') {
+//     function stripeHeadlessTask() {
+//       return new Promise(() => {});
+//     }
+
+//     AppRegistry.registerHeadlessTask(
+//       'StripeKeepJsAwakeTask',
+//       () => stripeHeadlessTask
+//     );
+//   }
+// //
+//
+//
+//
+//
+//
+//
+
 export default function ShopTab() {
     const { user } = useAuthStore();
 
@@ -37,8 +57,8 @@ export default function ShopTab() {
         return Math.round(sum * 100) / 100;
     }, []);
 
-    const [billingDetails, setBillingDetails] = useState<PurchaseData>({
-        userId: user?._id || "69fb35f77c633b871466c376", // Use real user ID or fallback
+    const billingDetails = useMemo<PurchaseData>(() => ({
+        userId: user?._id || "69fb35f77c633b871466c376",
         name: user?.firstName.concat(user?.lastName) || "John Doe",
         email: user?.email || "tester@gmail.com",
         paymentDetails: {
@@ -54,7 +74,7 @@ export default function ShopTab() {
         },
         products: mockProducts,
         totalPrice: totalPrice
-    });
+    }), [user, totalPrice]);
 
     const { openSheet, isInitializing, isReady, isProcessing, error } = usePaymentSheet(billingDetails);
 

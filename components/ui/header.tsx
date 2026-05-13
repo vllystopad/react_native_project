@@ -24,11 +24,10 @@ export const Header = () => {
       <Button
         mode="contained"
         onPress={() => {
-          if (isLoggedIn){
+          if (isLoggedIn) {
             logout();
-            router.navigate('/private')
           } else {
-            router.navigate('/login')
+            router.navigate('/login');
           }
         }}
       >
